@@ -1,0 +1,33 @@
+/* BetaRide Professional Styling Framework */
+
+/* Reset & Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Subtle Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF8F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D2C7;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B4ACA0;
+}
+
+/* Form elements reset */
+input, select, button {
+  font-family: inherit;
+}
+
+/* Button focus states */
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #0A1526;
+  outline-offset: 2px;
+}
