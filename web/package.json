@@ -1,0 +1,20 @@
+{
+  "name": "betaride-web",
+  "version": "1.0.0",
+  "description": "BetaRide Official Web Platform - Move More. Pay Less. (Ilorin, Kwara State)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "betaride",
+    "ride-hailing",
+    "ilorin",
+    "keke",
+    "okada",
+    "nigeria"
+  ],
+  "author": "BetaRide Team",
+  "license": "UNLICENSED"
+}
+

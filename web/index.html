@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetaRide — On-Demand Transit for Ilorin</title>
+  <meta name="description" content="BetaRide connects commuters with verified Keke, motorcycle, and car drivers across Ilorin through fair, decentralized fare negotiation.">
+  <link rel="icon" type="image/jpeg" href="assets/betaride-logo.jpg">
+
+  <!-- Editorial & Geometric Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Minimal Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              DEFAULT: '#FAF8F5',
+              subtle: '#F4EFEA',
+              card: '#FFFFFF',
+              border: '#E8E2D9',
+              dark: '#0B0F19',
+              darkCard: '#131926',
+              darkBorder: '#232B3E'
+            },
+            brand: {
+              navy: '#0A1526',
+              blue: '#0D2342',
+              gold: '#E5A00D',
+              goldHover: '#CF8E06',
+              goldSubtle: '#FBF4E4',
+              accent: '#2563EB'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-surface text-slate-900 font-sans antialiased selection:bg-brand-gold selection:text-brand-navy min-h-screen flex flex-col">
+
+  <!-- Top Strategic Pilot Bar -->
+  <div class="bg-brand-navy text-slate-300 text-xs py-2.5 px-6 border-b border-white/10">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center justify-center gap-2.5">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-brand-gold text-brand-navy uppercase tracking-wider">
+          Pilot Corridor
+        </span>
+        <span class="text-slate-300">Phase 1 operations active: <strong>Offa Garage Terminal ⇄ 5 Key Corridors</strong>, Ilorin.</span>
+      </div>
+      <div class="flex items-center gap-6 text-[11px] text-slate-400">
+        <span class="flex items-center gap-1.5 text-slate-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          50 Vetted Pilot Operators
+        </span>
+        <span class="text-slate-600">|</span>
+        <button onclick="openAuthModal('driver')" class="text-brand-gold hover:text-white transition-colors font-medium">
+          Driver Verification Portal &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-surface-border transition-all">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Brand Identity -->
+        <a href="#" class="flex items-center gap-3">
+          <img src="assets/betaride-logo.jpg" alt="BetaRide" class="w-10 h-10 rounded-full object-cover border border-surface-border">
+          <div class="flex flex-col">
+            <span class="font-bold text-xl text-brand-navy tracking-tight leading-none">BetaRide</span>
+            <span class="text-[10px] tracking-widest text-slate-500 uppercase mt-1 font-semibold">Move More. Pay Less.</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-slate-600">
+          <a href="#protocol" class="hover:text-brand-navy transition-colors">How It Works</a>
+          <a href="#routes" class="hover:text-brand-navy transition-colors">Corridors</a>
+          <a href="#calculator" class="hover:text-brand-navy transition-colors">Fare Index</a>
+          <a href="#fleet" class="hover:text-brand-navy transition-colors">Fleet Standards</a>
+          <a href="#driver-model" class="hover:text-brand-navy transition-colors">Partners</a>
+          <a href="#safety" class="hover:text-brand-navy transition-colors">Safety Protocol</a>
+        </nav>
+
+        <!-- Access Controls -->
+        <div class="hidden sm:flex items-center gap-3" id="navAuthContainer">
+          <button onclick="openAuthModal('login')" class="px-4 py-2 text-xs font-semibold text-slate-700 hover:text-brand-navy hover:bg-slate-200/50 rounded-lg transition-colors">
+            Sign In
+          </button>
+          <button onclick="openAuthModal('register')" class="px-4 py-2 text-xs font-semibold bg-brand-navy hover:bg-brand-blue text-white rounded-lg shadow-sm transition-colors">
+            Create Account
+          </button>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-700 hover:text-brand-navy focus:outline-none" aria-label="Toggle menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-surface-border bg-surface px-6 py-6 space-y-4">
+      <div class="flex flex-col space-y-3 text-sm font-semibold text-slate-700">
+        <a href="#protocol" class="mobile-link hover:text-brand-navy">How It Works</a>
+        <a href="#routes" class="mobile-link hover:text-brand-navy">Corridors</a>
+        <a href="#calculator" class="mobile-link hover:text-brand-navy">Fare Index</a>
+        <a href="#fleet" class="mobile-link hover:text-brand-navy">Fleet Standards</a>
+        <a href="#driver-model" class="mobile-link hover:text-brand-navy">Driver Partnership</a>
+        <a href="#safety" class="mobile-link hover:text-brand-navy">Safety Protocol</a>
+      </div>
+      <div class="pt-4 border-t border-surface-border flex flex-col gap-2.5">
+        <button onclick="openAuthModal('login')" class="w-full py-2.5 text-xs font-semibold text-slate-800 bg-white border border-surface-border rounded-lg">
+          Sign In
+        </button>
+        <button onclick="openAuthModal('register')" class="w-full py-2.5 text-xs font-semibold bg-brand-navy text-white rounded-lg">
+          Create Account
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="pt-16 pb-20 sm:pt-24 sm:pb-28 border-b border-surface-border">
+    <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center">
+      
+      <!-- Status Badge -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-surface-border text-slate-700 text-[11px] font-medium mb-8 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-brand-gold"></span>
+        <span>Peer-to-Peer Transit Network for Kwara State</span>
+      </div>
+
+      <!-- Main Headline with Editorial Serif Flair -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-brand-navy leading-[1.08] mb-6">
+        You get the ride. <br>
+        <span class="font-serif italic font-normal text-slate-800">You make the call.</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed mb-10 font-normal">
+        BetaRide replaces rigid algorithmic pricing with transparent, direct fare negotiation between passengers and verified Keke, motorcycle, and car drivers across Ilorin.
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-16">
+        <button onclick="openAuthModal('register')" class="w-full sm:w-auto px-6 py-3.5 bg-brand-navy hover:bg-brand-blue text-white text-xs font-semibold tracking-wider uppercase rounded-lg shadow-sm transition-all">
+          Register Passenger Account
+        </button>
+        <button onclick="openAuthModal('driver')" class="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-surface-border text-xs font-semibold tracking-wider uppercase rounded-lg transition-all">
+          Driver Onboarding
+        </button>
+      </div>
+
+      <!-- Institutional Metrics Band -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-surface-border border border-surface-border rounded-xl overflow-hidden shadow-sm">
+        
+        <div class="bg-white p-6 text-left">
+          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Take Rate</p>
+          <p class="text-2xl font-bold text-brand-navy">10%</p>
+          <p class="text-[11px] text-slate-500 mt-1">Pre-funded wallet debit only</p>
+        </div>
+
+        <div class="bg-white p-6 text-left">
+          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Pilot Fleet</p>
+          <p class="text-2xl font-bold text-brand-navy">50 Units</p>
+          <p class="text-[11px] text-slate-500 mt-1">Offa Garage hub corridor</p>
+        </div>
+
+        <div class="bg-white p-6 text-left">
+          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Settlement</p>
+          <p class="text-2xl font-bold text-brand-navy">Direct</p>
+          <p class="text-[11px] text-slate-500 mt-1">Cash or instant bank transfer</p>
+        </div>
+
+        <div class="bg-white p-6 text-left">
+          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Verification</p>
+          <p class="text-2xl font-bold text-brand-navy">Physical</p>
+          <p class="text-[11px] text-slate-500 mt-1">NIN, guarantor & vehicle check</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Vertical Connected Protocol Section (Template Inspired) -->
+  <section id="protocol" class="py-24 sm:py-32 bg-surface-subtle/40 border-b border-surface-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-8">
+      
+      <div class="text-center max-w-xl mx-auto mb-16">
+        <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest block mb-2">
+          Execution Architecture
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight">
+          How the Negotiation Protocol Works
+        </h2>
+        <p class="text-sm text-slate-600 mt-3 leading-relaxed">
+          A disciplined three-step transaction flow designed to minimize street wait times and eliminate algorithmic surge gouging.
+        </p>
+      </div>
+
+      <!-- Connected Vertical Step Cards with Connecting Line -->
+      <div class="relative">
+        
+        <!-- Central Vertical Connector -->
+        <div class="absolute left-6 top-8 bottom-8 w-px bg-slate-300 hidden sm:block"></div>
+
+        <div class="space-y-8">
+          
+          <!-- Step 1 -->
+          <div class="relative flex flex-col sm:flex-row items-start gap-6 bg-white p-8 rounded-2xl border border-surface-border shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-surface-subtle text-brand-navy font-bold text-base flex items-center justify-center shrink-0 border border-surface-border z-10">
+              01
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-brand-navy">Route Definition & Fair Price Proposal</h3>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Passenger</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                The commuter selects their pickup point and destination from curated Ilorin landmarks. The system references the municipal benchmark index and suggests a base fair rate. The passenger inputs their proposed fare within the permissible corridor threshold.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative flex flex-col sm:flex-row items-start gap-6 bg-white p-8 rounded-2xl border border-surface-border shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-brand-navy text-white font-bold text-base flex items-center justify-center shrink-0 z-10">
+              02
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-brand-navy">Proximity Broadcast & Single Counter Option</h3>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Driver Pool</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                The offer is transmitted via lightweight WebSockets to the 10 nearest active operators within a 3-kilometer radius. A driver can confirm with one tap at the proposed fare, or issue a single structured counter-offer. Looped haggling is disabled to prevent distraction while driving.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative flex flex-col sm:flex-row items-start gap-6 bg-white p-8 rounded-2xl border border-surface-border shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-surface-subtle text-brand-navy font-bold text-base flex items-center justify-center shrink-0 border border-surface-border z-10">
+              03
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-brand-navy">Dispatch Lock & Direct Terminal Settlement</h3>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Fulfillment</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                The passenger selects their preferred driver based on rating, proximity, and counter-quote. The trip is logged on the dispatch registry. At drop-off, the passenger pays the driver directly via cash or mobile transfer. The platform takes 10% from the driver's pre-funded wallet.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- High Contrast Telemetry Showcase Container (Inspired by Dark Showcase in Template) -->
+      <div class="mt-12 bg-surface-dark text-white rounded-2xl p-8 sm:p-10 border border-surface-darkBorder shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <span class="text-[10px] font-bold text-brand-gold uppercase tracking-wider block mb-1">Corridor Status</span>
+            <p class="text-xl font-bold">Offa Garage Terminal</p>
+            <p class="text-xs text-slate-400 mt-1">High-density dispatch zone active 06:00 to 21:00 daily.</p>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-brand-gold uppercase tracking-wider block mb-1">Average Match Window</span>
+            <p class="text-xl font-bold">42 Seconds</p>
+            <p class="text-xs text-slate-400 mt-1">From passenger broadcast to driver confirmation.</p>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-brand-gold uppercase tracking-wider block mb-1">Union Recognition</span>
+            <p class="text-xl font-bold">Direct Park Alliance</p>
+            <p class="text-xs text-slate-400 mt-1">Structured coordination with park leadership to prevent conflict.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Strategic Corridors Section (Pilot Focus) -->
+  <section id="routes" class="py-24 bg-white border-b border-surface-border">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div>
+          <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest block mb-2">
+            Target Pilot Corridor
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight">
+            Offa Garage to Five Strategic Hubs
+          </h2>
+        </div>
+        <p class="text-sm text-slate-600 max-w-md leading-relaxed">
+          We intentionally concentrated driver supply on these five arterial routes to ensure consistent availability for students, civil servants, and commercial traders.
+        </p>
+      </div>
+
+      <!-- Corridor Table Layout -->
+      <div class="border border-surface-border rounded-xl overflow-hidden shadow-sm">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-surface-subtle text-slate-500 uppercase tracking-wider border-b border-surface-border font-semibold">
+              <th class="py-4 px-6">Route Identifier</th>
+              <th class="py-4 px-6">Strategic Purpose</th>
+              <th class="py-4 px-6">Distance</th>
+              <th class="py-4 px-6">Tricycle Benchmark</th>
+              <th class="py-4 px-6">Motorcycle Benchmark</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border bg-white text-slate-700">
+            
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-4 px-6 font-semibold text-brand-navy">Offa Garage ⇄ Tanke Junction</td>
+              <td class="py-4 px-6 text-slate-500">University commuter & student hostel zone</td>
+              <td class="py-4 px-6 font-medium">6.8 km</td>
+              <td class="py-4 px-6 font-bold text-brand-navy">₦2,000 – ₦2,500</td>
+              <td class="py-4 px-6 font-medium">₦1,500 – ₦1,800</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-4 px-6 font-semibold text-brand-navy">Offa Garage ⇄ Gerin Alimi Flyover</td>
+              <td class="py-4 px-6 text-slate-500">Asa Dam arterial & western transport node</td>
+              <td class="py-4 px-6 font-medium">8.2 km</td>
+              <td class="py-4 px-6 font-bold text-brand-navy">₦2,500 – ₦3,000</td>
+              <td class="py-4 px-6 font-medium">₦1,800 – ₦2,200</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-4 px-6 font-semibold text-brand-navy">Offa Garage ⇄ Ilorin Innovation Hub</td>
+              <td class="py-4 px-6 text-slate-500">Fate Road technology & knowledge workers</td>
+              <td class="py-4 px-6 font-medium">5.4 km</td>
+              <td class="py-4 px-6 font-bold text-brand-navy">₦1,800 – ₦2,200</td>
+              <td class="py-4 px-6 font-medium">₦1,400 – ₦1,600</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-4 px-6 font-semibold text-brand-navy">Offa Garage ⇄ Post Office / Muritala</td>
+              <td class="py-4 px-6 text-slate-500">Central commercial business & retail district</td>
+              <td class="py-4 px-6 font-medium">4.5 km</td>
+              <td class="py-4 px-6 font-bold text-brand-navy">₦1,600 – ₦2,000</td>
+              <td class="py-4 px-6 font-medium">₦1,200 – ₦1,500</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-4 px-6 font-semibold text-brand-navy">Offa Garage ⇄ Tipper Garage / Basin</td>
+              <td class="py-4 px-6 text-slate-500">Residential connector & agricultural belt</td>
+              <td class="py-4 px-6 font-medium">3.9 km</td>
+              <td class="py-4 px-6 font-bold text-brand-navy">₦1,400 – ₦1,800</td>
+              <td class="py-4 px-6 font-medium">₦1,000 – ₦1,300</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Benchmark & Simulator Section -->
+  <section id="calculator" class="py-24 bg-surface-subtle/50 border-b border-surface-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-8">
+      
+      <div class="text-center max-w-xl mx-auto mb-16">
+        <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest block mb-2">
+          Route Benchmark Estimator
+        </span>
+        <h2 class="text-3xl font-bold text-brand-navy tracking-tight">
+          Test Corridor Benchmarks
+        </h2>
+        <p class="text-sm text-slate-600 mt-2">
+          Select a destination from the Offa Garage pilot to view the standard pricing envelope.
+        </p>
+      </div>
+
+      <div class="bg-white border border-surface-border rounded-2xl p-8 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Origin</label>
+              <input type="text" value="Offa Garage Terminal, Ilorin" readonly class="w-full bg-slate-50 border border-surface-border rounded-lg px-4 py-2.5 text-xs font-semibold text-slate-700 cursor-not-allowed">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Destination Corridor</label>
+              <select id="calcDestination" onchange="runFareCalculation()" class="w-full bg-white border border-surface-border rounded-lg px-4 py-2.5 text-xs font-semibold text-brand-navy focus:ring-1 focus:ring-brand-navy focus:outline-none">
+                <option value="tanke" data-dist="6.8 km" data-keke="2000" data-bike="1500" data-car="3500">Tanke (University Corridor)</option>
+                <option value="gerin-alimi" data-dist="8.2 km" data-keke="2500" data-bike="1800" data-car="4000">Gerin Alimi Flyover / Asa Dam</option>
+                <option value="innovation-hub" data-dist="5.4 km" data-keke="1800" data-bike="1400" data-car="3000">Ilorin Innovation Hub (Fate Road)</option>
+                <option value="post-office" data-dist="4.5 km" data-keke="1600" data-bike="1200" data-car="2800">Post Office Roundabout / Muritala</option>
+                <option value="tipper-garage" data-dist="3.9 km" data-keke="1400" data-bike="1000" data-car="2500">Tipper Garage / Basin</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Vehicle Class</label>
+              <div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+                <button type="button" onclick="setFleetFilter('keke')" id="fleetBtnKeke" class="py-2.5 px-3 rounded-lg border border-brand-navy bg-brand-navy text-white transition-all">
+                  Tricycle
+                </button>
+                <button type="button" onclick="setFleetFilter('bike')" id="fleetBtnBike" class="py-2.5 px-3 rounded-lg border border-surface-border bg-white text-slate-700 transition-all">
+                  Motorcycle
+                </button>
+                <button type="button" onclick="setFleetFilter('car')" id="fleetBtnCar" class="py-2.5 px-3 rounded-lg border border-surface-border bg-white text-slate-700 transition-all">
+                  Car Drop
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Readout -->
+          <div class="bg-surface-subtle p-6 rounded-xl border border-surface-border space-y-4">
+            <div class="flex justify-between items-center pb-4 border-b border-surface-border">
+              <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Corridor Distance</span>
+              <span class="text-sm font-bold text-brand-navy" id="calcDistanceVal">6.8 km</span>
+            </div>
+            <div class="flex justify-between items-center pb-4 border-b border-surface-border">
+              <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Benchmark Fare</span>
+              <span class="text-2xl font-bold text-brand-navy" id="calcPriceVal">₦2,000</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Negotiation Envelope</span>
+              <span class="text-xs font-semibold text-slate-700" id="calcRangeVal">₦1,600 – ₦2,400</span>
+            </div>
+            <p class="text-[11px] text-slate-500 pt-2 border-t border-surface-border leading-relaxed">
+              Passengers may offer anywhere inside this range based on load, weather, or urgency.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Fleet Standards Section -->
+  <section id="fleet" class="py-24 bg-white border-b border-surface-border">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      
+      <div class="text-center max-w-xl mx-auto mb-16">
+        <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest block mb-2">
+          Vehicle Standards
+        </span>
+        <h2 class="text-3xl font-bold text-brand-navy tracking-tight">
+          Tailored to Local Transit Realities
+        </h2>
+        <p class="text-sm text-slate-600 mt-2">
+          Engineered for everyday Nigerian road infrastructure, student relocation needs, and swift intra-city transit.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="bg-surface-subtle p-8 rounded-2xl border border-surface-border">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Class 01</p>
+          <h3 class="text-xl font-bold text-brand-navy mb-3">Tricycle (Keke Napep)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-6">
+            The core workhorse of Ilorin intra-city transit. Fitted with luggage space for student luggage, campus moves, and market provisions without roadside dispute.
+          </p>
+          <ul class="text-xs text-slate-700 space-y-2 border-t border-surface-border pt-4">
+            <li>• Capacity: Up to 3 passengers + rear cargo</li>
+            <li>• Best for: Tanke, Gerin Alimi, heavy bags</li>
+            <li>• Pilot Fare Range: ₦1,400 – ₦3,000</li>
+          </ul>
+        </div>
+
+        <div class="bg-surface-subtle p-8 rounded-2xl border border-surface-border">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Class 02</p>
+          <h3 class="text-xl font-bold text-brand-navy mb-3">Motorcycle (Commercial)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-6">
+            For individual commuters requiring rapid transit through peak traffic corridors. Mandatory helmet and verified operator identification.
+          </p>
+          <ul class="text-xs text-slate-700 space-y-2 border-t border-surface-border pt-4">
+            <li>• Capacity: 1 passenger</li>
+            <li>• Best for: Time-critical appointments, solo trips</li>
+            <li>• Pilot Fare Range: ₦1,000 – ₦2,200</li>
+          </ul>
+        </div>
+
+        <div class="bg-surface-subtle p-8 rounded-2xl border border-surface-border">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Class 03</p>
+          <h3 class="text-xl font-bold text-brand-navy mb-3">Private Sedan (Car Drop)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-6">
+            Air-conditioned vehicles for executive travel, airport transfers, and long-range inter-district transits in Kwara State.
+          </p>
+          <ul class="text-xs text-slate-700 space-y-2 border-t border-surface-border pt-4">
+            <li>• Capacity: Up to 4 passengers</li>
+            <li>• Best for: Executive meetings, family travel</li>
+            <li>• Pilot Fare Range: ₦2,500 – ₦4,500</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Driver Partnership & Union Alignment Section (Dark Theme from Template) -->
+  <section id="driver-model" class="py-24 bg-surface-dark text-white border-b border-surface-darkBorder">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-6 space-y-6">
+          <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest block">
+            Operator Economics
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">
+            Transparent Commissions. No Settlement Traps.
+          </h2>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Unlike foreign ride-hailing networks that withhold earnings or mandate complex bank payout schedules, BetaRide keeps transactions cash-first and local.
+          </p>
+
+          <div class="space-y-4 pt-2">
+            <div class="border-l-2 border-brand-gold pl-4">
+              <h4 class="text-sm font-bold text-white">Pre-Funded Wallet Architecture</h4>
+              <p class="text-xs text-slate-400 mt-1">Drivers retain 100% of passenger cash or transfer payments. BetaRide automatically debits its 10% platform fee from your pre-loaded balance.</p>
+            </div>
+
+            <div class="border-l-2 border-brand-gold pl-4">
+              <h4 class="text-sm font-bold text-white">Park Executive Coordination</h4>
+              <p class="text-xs text-slate-400 mt-1">We align operations with leadership at Offa Garage Terminal to prevent conflict and uphold local transport protocols.</p>
+            </div>
+
+            <div class="border-l-2 border-brand-gold pl-4">
+              <h4 class="text-sm font-bold text-white">Accessible Android Interface</h4>
+              <p class="text-xs text-slate-400 mt-1">Designed for high-contrast visibility on standard devices. Large interactive touch targets and clear audio notifications.</p>
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <button onclick="openAuthModal('driver')" class="px-6 py-3.5 bg-brand-gold hover:bg-brand-goldHover text-brand-navy text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors">
+              Begin Driver Pre-Registration
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 bg-surface-darkCard border border-surface-darkBorder rounded-2xl p-8 space-y-6">
+          <h3 class="text-lg font-bold text-white border-b border-surface-darkBorder pb-4">
+            Mandatory Physical Verification at Offa Garage
+          </h3>
+
+          <div class="space-y-4 text-xs text-slate-300">
+            <div class="flex items-start gap-4">
+              <span class="w-6 h-6 rounded-full bg-white/10 text-brand-gold font-bold flex items-center justify-center shrink-0">1</span>
+              <div>
+                <p class="font-bold text-white">National Identification Number (NIN)</p>
+                <p class="text-slate-400 mt-0.5">Government identity verification linked directly to the operator profile.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <span class="w-6 h-6 rounded-full bg-white/10 text-brand-gold font-bold flex items-center justify-center shrink-0">2</span>
+              <div>
+                <p class="font-bold text-white">Physical Roadworthiness Inspection</p>
+                <p class="text-slate-400 mt-0.5">Physical check of braking systems, tires, mirrors, and body integrity at our inspection desk.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <span class="w-6 h-6 rounded-full bg-white/10 text-brand-gold font-bold flex items-center justify-center shrink-0">3</span>
+              <div>
+                <p class="font-bold text-white">Reputable Guarantor Documentation</p>
+                <p class="text-slate-400 mt-0.5">Verification of one community-backed guarantor before account activation.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-surface-darkBorder flex justify-between items-center text-[11px] text-slate-400">
+            <span>Operating Desk: Offa Garage, Ilorin</span>
+            <span class="text-brand-gold font-semibold">Monday – Saturday</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Safety & Emergency Protocol -->
+  <section id="safety" class="py-24 bg-white border-b border-surface-border">
+    <div class="max-w-5xl mx-auto px-6 lg:px-8">
+      
+      <div class="border border-surface-border rounded-2xl p-8 sm:p-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          
+          <div class="md:col-span-8 space-y-4">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">
+              Passenger & Operator Safeguards
+            </span>
+            <h3 class="text-2xl sm:text-3xl font-bold text-brand-navy tracking-tight">
+              Safety Architecture & Rapid Response
+            </h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Every dispatched journey logs vehicle registration details, operator identity, and route timestamps. A single-tap in-app distress trigger immediately logs coordinates to our central monitoring desk.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-xs font-semibold text-slate-700">
+              <div class="border-l-2 border-slate-300 pl-3">
+                <span>Verified Identity</span>
+                <p class="text-[11px] font-normal text-slate-500 mt-0.5">No unverified operators permitted on platform.</p>
+              </div>
+              <div class="border-l-2 border-slate-300 pl-3">
+                <span>Real-Time Logs</span>
+                <p class="text-[11px] font-normal text-slate-500 mt-0.5">Journey telemetry preserved on secure ledger.</p>
+              </div>
+              <div class="border-l-2 border-slate-300 pl-3">
+                <span>Local Support</span>
+                <p class="text-[11px] font-normal text-slate-500 mt-0.5">Kwara State operations desk on standby.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-4 bg-surface-subtle border border-surface-border rounded-xl p-6 text-center space-y-2">
+            <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">Emergency Signal Desk</p>
+            <p class="text-2xl font-bold text-brand-navy font-mono">0800-BETA-RIDE</p>
+            <p class="text-[11px] text-slate-500">Continuous dispatch monitoring during active pilot hours.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Institutional Footer -->
+  <footer class="bg-surface-dark text-slate-400 py-16 border-t border-surface-darkBorder mt-auto">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-surface-darkBorder text-xs">
+        
+        <div class="space-y-4 md:col-span-1">
+          <div class="flex items-center gap-3">
+            <img src="assets/betaride-logo.jpg" alt="BetaRide" class="w-8 h-8 rounded-full object-cover">
+            <span class="font-bold text-lg text-white tracking-tight">BetaRide</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed text-[11px]">
+            Decentralized mobility technology tailored for Nigerian intra-city transit networks.
+          </p>
+          <p class="text-[11px] text-slate-500">
+            Offa Garage Terminal Hub, Ilorin, Kwara State.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold uppercase tracking-wider mb-3 text-[11px]">Platform</h4>
+          <ul class="space-y-2">
+            <li><a href="#protocol" class="hover:text-white transition-colors">Negotiation Protocol</a></li>
+            <li><a href="#routes" class="hover:text-white transition-colors">Pilot Corridors</a></li>
+            <li><a href="#calculator" class="hover:text-white transition-colors">Fare Index</a></li>
+            <li><a href="#fleet" class="hover:text-white transition-colors">Fleet Specifications</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold uppercase tracking-wider mb-3 text-[11px]">Operations & Drivers</h4>
+          <ul class="space-y-2">
+            <li><button onclick="openAuthModal('driver')" class="hover:text-white transition-colors">Driver Verification</button></li>
+            <li><a href="#driver-model" class="hover:text-white transition-colors">Pre-Funded Wallet Model</a></li>
+            <li><a href="#driver-model" class="hover:text-white transition-colors">Union Alignment Policy</a></li>
+            <li><a href="#safety" class="hover:text-white transition-colors">Safety Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold uppercase tracking-wider mb-3 text-[11px]">Governance</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-white transition-colors">Terms of Operations</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Privacy Framework</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Dispute Resolution</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Kwara Transport Standards</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-4">
+        <p>&copy; 2026 BetaRide Technologies Nigeria Ltd. All rights reserved.</p>
+        <p>Ilorin Pilot Deployment Phase 1.0</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Unified Auth Modal (Clean, Professional, No Emojis) -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-surface-border transform scale-95 transition-transform duration-200 flex flex-col" id="modalCard">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-5 border-b border-surface-border flex items-center justify-between bg-surface-subtle/50">
+        <div>
+          <h3 class="font-bold text-base text-brand-navy" id="modalTitle">Passenger Sign In</h3>
+          <p class="text-xs text-slate-500 mt-0.5" id="modalSubtitle">Access your BetaRide profile</p>
+        </div>
+        <button onclick="closeAuthModal()" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition-colors" aria-label="Close modal">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-surface-border text-xs font-semibold text-slate-500">
+        <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-3 text-center border-b-2 border-brand-navy text-brand-navy transition-colors">
+          Sign In
+        </button>
+        <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-brand-navy transition-colors">
+          Register Passenger
+        </button>
+        <button id="tabDriver" onclick="switchAuthTab('driver')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-brand-navy transition-colors">
+          Driver Pre-Registration
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-4 max-h-[80vh]">
+        
+        <div id="authAlert" class="hidden p-3 rounded-lg text-xs font-medium"></div>
+
+        <!-- 1. Passenger Login Form -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Phone Number</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-semibold">+234</span>
+              <input type="tel" id="loginPhone" required placeholder="801 234 5678" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg pl-14 pr-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-xs font-bold text-slate-600 uppercase">Access PIN / Password</label>
+              <a href="#" onclick="alert('PIN reset link will be sent via SMS in production.')" class="text-xs text-slate-500 hover:underline">Forgot?</a>
+            </div>
+            <input type="password" id="loginPass" required placeholder="Enter your 4-digit PIN" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-brand-navy hover:bg-brand-blue text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors">
+            Confirm & Sign In
+          </button>
+        </form>
+
+        <!-- 2. Passenger Register Form -->
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Full Legal Name</label>
+            <input type="text" id="regName" required placeholder="e.g. Samuel Adebayo" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Phone Number</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-semibold">+234</span>
+              <input type="tel" id="regPhone" required placeholder="801 234 5678" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg pl-14 pr-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Primary District</label>
+            <select id="regLocation" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+              <option value="Offa Garage">Offa Garage / Olunlade</option>
+              <option value="Tanke">Tanke (UNILORIN)</option>
+              <option value="Fate Road">Fate Road / Innovation Hub</option>
+              <option value="Gerin Alimi">Gerin Alimi / Asa Dam</option>
+              <option value="Post Office">Post Office / Muritala</option>
+              <option value="Tipper Garage">Tipper Garage / Basin</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Set 4-Digit Security PIN</label>
+            <input type="password" id="regPin" maxlength="4" required placeholder="4-digit numeric PIN" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-brand-navy hover:bg-brand-blue text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors">
+            Create Passenger Account
+          </button>
+        </form>
+
+        <!-- 3. Driver Pre-Registration Form -->
+        <form id="driverForm" onsubmit="handleDriverSubmit(event)" class="space-y-4 hidden">
+          <div class="bg-surface-subtle p-3 rounded-lg border border-surface-border text-xs text-slate-600">
+            Pre-registration will be finalized physically at our Offa Garage verification desk.
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Operator Full Name</label>
+            <input type="text" id="drvName" required placeholder="Full legal name" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Phone Number</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-semibold">+234</span>
+              <input type="tel" id="drvPhone" required placeholder="801 234 5678" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg pl-14 pr-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Vehicle Class</label>
+              <select id="drvVehicle" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+                <option value="keke">Tricycle (Keke)</option>
+                <option value="bike">Motorcycle (Okada)</option>
+                <option value="car">Car Drop</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Plate Number</label>
+              <input type="text" id="drvPlate" required placeholder="KWR 123 AA" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy uppercase">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">National Identity Number (NIN)</label>
+            <input type="text" id="drvNin" required maxlength="11" placeholder="11-digit NIN" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Primary Terminal / Station</label>
+            <select id="drvPark" class="w-full bg-surface-subtle/40 border border-surface-border rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-brand-navy">
+              <option value="Offa Garage Terminal">Offa Garage Terminal</option>
+              <option value="Tanke Park">Tanke Park</option>
+              <option value="Post Office Park">Post Office Park</option>
+              <option value="Gerin Alimi Park">Gerin Alimi Park</option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-brand-navy hover:bg-brand-blue text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors">
+            Submit for Physical Verification
+          </button>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
