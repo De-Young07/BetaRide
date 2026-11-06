@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 const demoMode = import.meta.env.PROD && !import.meta.env.VITE_API_URL;
-const API = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+const API = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:4000';
 type Offer = { id:string; driver:string; vehicle:string; eta:number; fare:number; rating:number; verified:boolean; status:string };
 type Ride = { id:string; status:string; fare:number; offers:Offer[] };
 
@@ -147,7 +147,7 @@ export function App() {
           <p>See final fare, ETA, vehicle and verification before you accept.</p>
         </article>
         <article>
-          <img src={assetUrl('pic-03.webp')} alt="Car option"/>
+          <img src={assetUrl('pic-03.jpg')} alt="Car option"/>
           <b>03</b>
           <h3>Ride with confidence</h3>
           <p>Get trip details, support tools and direct settlement guidance.</p>

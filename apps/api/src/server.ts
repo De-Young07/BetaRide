@@ -75,4 +75,4 @@ app.post('/v1/offers/:id/accept', async (request, reply) => {
   return { tripId:randomUUID(), request:publicRequest(ride), message:'Ride confirmed. Your driver will meet you at the pickup point.' };
 });
 function publicRequest(ride:Request) { return { id:ride.id, pickup:ride.pickup, destination:ride.destination, vehicle:ride.vehicle, fare:ride.fare, status:ride.status, stateVersion:ride.stateVersion, expiresAt:ride.expiresAt, offers:ride.offers }; }
-await app.listen({ port:Number(process.env.PORT ?? 3001), host:'0.0.0.0' });
+await app.listen({ port:Number(process.env.PORT ?? 4000), host:process.env.HOST ?? '127.0.0.1' });

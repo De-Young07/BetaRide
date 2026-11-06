@@ -2,5 +2,9 @@
   "framework": null,
   "cleanUrls": true,
   "buildCommand": "npm run build:vercel",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/booking/(.*)", "destination": "/booking/index.html" },
+    { "source": "/booking", "destination": "/booking/index.html" }
+  ]
 }
