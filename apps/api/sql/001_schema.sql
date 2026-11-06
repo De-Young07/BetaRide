@@ -1,0 +1,10 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE TYPE dispatch_state AS ENUM ('active','paused','recovering');
+CREATE TYPE request_status AS ENUM ('open','matched','expired','cancelled');
+CREATE TYPE offer_status AS ENUM ('pending','accepted','expired','declined');
+CREATE TABLE corridors (id uuid PRIMARY KEY, name text NOT NULL, dispatch_state dispatch_state NOT NULL DEFAULT 'active');
+CREATE TABLE ride_requests (id uuid PRIMARY KEY, corridor_id uuid NOT NULL REFERENCES corridors(id), rider_phone_hash text NOT NULL, pickup_name text NOT NULL, destination_name text NOT NULL, vehicle_type text NOT NULL, proposed_fare integer NOT NULL, status request_status NOT NULL DEFAULT 'open', state_version integer NOT NULL DEFAULT 1, expires_at timestamptz NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE driver_offers (id uuid PRIMARY KEY, request_id uuid NOT NULL REFERENCES ride_requests(id), driver_id uuid NOT NULL, final_fare integer NOT NULL, status offer_status NOT NULL DEFAULT 'pending', expires_at timestamptz NOT NULL);
+CREATE UNIQUE INDEX one_accepted_offer_per_request ON driver_offers(request_id) WHERE status = 'accepted';
+CREATE TABLE trips (id uuid PRIMARY KEY, request_id uuid NOT NULL UNIQUE REFERENCES ride_requests(id), offer_id uuid NOT NULL UNIQUE REFERENCES driver_offers(id), status text NOT NULL DEFAULT 'confirmed', created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE outbox_events (id uuid PRIMARY KEY, topic text NOT NULL, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), published_at timestamptz);

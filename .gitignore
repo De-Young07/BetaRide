@@ -11,8 +11,20 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+.env.*.local
+dist/
+coverage/
+playwright-report/
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Scratch image drafts
+/OIP*
+/cropped-*
+/deluxe*
+/download*
+/shutterstock*
+/12412090_*
 
