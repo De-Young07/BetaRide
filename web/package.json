@@ -2,7 +2,8 @@
   "name": "betaride-web",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "echo Static site ready"
+    "build": "node build.mjs"
   }
 }

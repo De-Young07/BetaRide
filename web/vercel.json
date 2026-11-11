@@ -1,6 +1,6 @@
 {
-  "buildCommand": "echo Static site ready",
-  "outputDirectory": ".",
+  "buildCommand": "node build.mjs",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
     { "source": "/booking/(.*)", "destination": "/booking/index.html" },
